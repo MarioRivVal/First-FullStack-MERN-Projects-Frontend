@@ -1,32 +1,50 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Alerta from "./Alerta";
+import usePacientes from "../hooks/usePacientes";
 
 const Formulario = () => {
   const [nombre, setNombre] = useState("");
-  const [propietario, setPropoetario] = useState("");
+  const [propietario, setPropietario] = useState("");
   const [email, setEmail] = useState("");
-  const [fecha, setFecha] = useState(Date.now());
+  const [fecha, setFecha] = useState("");
   const [sintomas, setSintomas] = useState("");
+  const [id, setId] = useState(null);
 
   const [alerta, setAlerta] = useState({});
+  const { guardarPaciente, paciente } = usePacientes();
+
+  useEffect(() => {
+    if (paciente?.nombre) {
+      setNombre(paciente.nombre);
+      setPropietario(paciente.propietario);
+      setEmail(paciente.email);
+      setFecha(paciente.fecha);
+      setSintomas(paciente.sintomas);
+      setId(paciente._id);
+    }
+  }, [paciente]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     // VALIDAR FORMULARIO
-    if ([nombre, propietario, email, sintomas].includes("")) {
+    if ([nombre, propietario, email, fecha, sintomas].includes("")) {
       setAlerta({ msg: "Todos los campos son obligatorios", error: true });
       return;
     }
 
-    console.log("tdoo lleno");
+    setAlerta({});
+    guardarPaciente({ nombre, propietario, email, fecha, sintomas, id });
   };
 
   const { msg } = alerta;
 
   return (
     <>
-      <p className="text-lg text-center mb-10">
+      <h2 className="font-black text-3xl text-center">
+        Administrador de Pacientes
+      </h2>
+      <p className="text-xl mt-5 mb-10 text-center">
         Añade tus pacientes y{" "}
         <span className="text-indigo-600 font-bold">Administralos</span>
       </p>
@@ -61,7 +79,7 @@ const Formulario = () => {
             placeholder="Nombre del Propetario"
             className="border-2 w-full mt-2 p-2 placeholder-gray-400 rounded-md"
             value={propietario}
-            onChange={(e) => setPropoetario(e.target.value)}
+            onChange={(e) => setPropietario(e.target.value)}
           />
         </div>
         <div className="mb-5">
@@ -107,7 +125,7 @@ const Formulario = () => {
 
         <input
           type="submit"
-          value="Agregar pacientes"
+          value={id ? "Guardar Cambios" : "Agregar Paciente"}
           className="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 cursor-pointer transition-colors"
         />
       </form>

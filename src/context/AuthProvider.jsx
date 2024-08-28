@@ -3,7 +3,7 @@ import clienteAxios from "../config/axios";
 
 const AuthContext = createContext();
 
-const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children }) => {
   const [cargando, setCargando] = useState(true);
   const [auth, setAuth] = useState({});
 
@@ -47,7 +47,5 @@ const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-export { AuthProvider };
 
 export default AuthContext;
